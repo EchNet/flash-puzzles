@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:Box xmlns="net.ech.fence.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:puzzle="net.ech.puzzle.*"
+    borderStyle="solid"
+    borderColor="#222288"
+    creationComplete="handleCreationComplete()"
+>
+
+    <mx:Script><![CDATA[
+
+        private function handleCreationComplete():void
+        {
+            addEventListener("clear", function(e:Event):void
+            {
+                controller.clear();
+            });
+        }
+
+    ]]></mx:Script>
+
+    <FencesController id="controller" model="{data as FencesModel}"/>
+
+    <mx:Image width="{view.preferredWidth}" height="{view.preferredHeight}"
+            scaleContent="false">
+
+        <mx:source>
+            <FencesView id="view" model="{data as FencesModel}" select="controller.select(Segment(event.data))" />
+        </mx:source>
+    </mx:Image>
+</mx:Box>

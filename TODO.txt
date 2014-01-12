@@ -1,0 +1,34 @@
+BACKLOG
+-------
+
+GENERAL:
+
+Handle configuration errors user visibly.
+Registration and login
+
+Puzzle catalog.
+Puzzle upload.
+Per-user puzzle state save and restore.
+Per-user per-puzzle checkbox.
+
+0. Page integration
+
+Flash failure report
+Help/Instructions
+Style the Flash modal screen - get rid of border. (monkey patch?)
+
+1. Bridges
+
+2. Paint by number
+
+Button controls for drag to mark
+Spiff up win display
+Change cursor for hover/drag.
+Implement autosolve accelerator for single row/column
+Modify row/column header text color as pieces are satisfied
+
+3.  Fences
+
+Show interior/exterior while game in progress
+More win animation
+More Fences puzzles.

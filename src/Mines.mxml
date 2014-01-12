@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:HBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.*"
+>
+
+    <MinesForm width="50%" height="100%"/>
+    <MinesBoard width="50%" height="100%"/>
+
+</mx:HBox>

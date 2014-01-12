@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Paint By Numbers component.
+
+-->
+
+<mx:Box xmlns="net.ech.pbn.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:puzzle="net.ech.puzzle.*"
+    creationComplete="handleCreationComplete()"
+>
+
+    <mx:Script><![CDATA[
+
+        public static const CELL_SIZE:int = 14;
+        public static const MARGIN_SIZE:int = 2;
+
+        private function handleCreationComplete():void
+        {
+            addEventListener("clear", function(e:Event):void
+            {
+                controller.clear();
+            });
+        }
+
+        [Bindable("dataChange")]
+        public function get model():PbnModel
+        {
+            return data as PbnModel;
+        }
+
+    ]]></mx:Script>
+
+    <PbnController id="controller" model="{model}"/>
+
+    <mx:HBox horizontalGap="0">
+
+        <mx:Spacer width="{horizLabelBox.width}"/>
+        <mx:Repeater id="vrep1" dataProvider="{model.columnInputs}">
+
+            <mx:VBox height="100%" verticalAlign="bottom"
+                    verticalGap="0"
+                    paddingLeft="0" paddingRight="0"
+                    paddingTop="0" paddingBottom="0">
+
+                <mx:Repeater id="vrep2" dataProvider="{vrep1.currentItem}">
+
+                    <NumbLabel value="{vrep2.currentItem}"
+                            width="{PbnGridView.CELL_SIZE}"
+                            height="{PbnGridView.CELL_SIZE}" />
+                </mx:Repeater>
+            </mx:VBox>
+        </mx:Repeater>
+    </mx:HBox>
+
+    <mx:HBox horizontalGap="0" verticalGap="0">
+
+        <mx:VBox id="horizLabelBox" height="100%" verticalGap="0"
+                paddingTop="-2">
+
+            <mx:Repeater id="rep1" dataProvider="{model.rowInputs}">
+
+                <mx:HBox horizontalGap="0"
+                        horizontalAlign="right" width="100%">
+
+                    <mx:Repeater id="rep2"
+                            dataProvider="{rep1.currentItem}">
+
+                        <NumbLabel value="{rep2.currentItem}"
+                                width="{PbnGridView.CELL_SIZE}"
+                                height="{PbnGridView.CELL_SIZE}"/>
+                    </mx:Repeater>
+                </mx:HBox>
+            </mx:Repeater>
+        </mx:VBox>
+
+        <mx:Spacer width="4"/>
+
+        <mx:Image width="{grid.preferredWidth}" height="{grid.preferredHeight}"
+                scaleContent="false">
+
+            <mx:source>
+                <PbnGridView id="grid" model="{model}"
+                        select="controller.select(event.data)" />
+            </mx:source>
+        </mx:Image>
+    </mx:HBox>
+
+    <mx:HBox horizontalGap="0">
+
+        <mx:Spacer width="{horizLabelBox.width}"/>
+        <mx:Label width="100%" 
+                text="{model.title}"
+                fontSize="18"
+                color="#880000"
+                textAlign="center"
+                visible="{model != null &amp;&amp; model.solved}"/>
+    </mx:HBox>
+
+</mx:Box>

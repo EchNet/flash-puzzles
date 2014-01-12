@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Test the Mines mouse tracker.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.classic.*"
+    xmlns:a="net.ech.anim.*"
+    initialize="disableContextMenu()"
+>
+
+    <mx:Script><![CDATA[
+        import flash.events.MouseEvent;
+        import net.ech.viva.events.VEvent;
+
+        [Bindable]
+        public var zoneColor:uint = 0xffffff;
+        [Bindable]
+        public var roverColor:uint = 0xffffff;
+
+        private function disableContextMenu():void
+        {
+            contextMenu = new ContextMenu;
+            contextMenu.hideBuiltInItems();
+        }
+
+        private function showHover(event:VEvent):void
+        {
+            switch (event.data.latentFunc)
+            {
+            case "light": 
+                zoneColor = 0xaaaaaa;
+                break;
+            case "heavy":
+                zoneColor = 0x666666;
+                break;
+            case "restart":
+                roverColor = 0xaaaaaa;
+                break;
+            default:
+                if (event.target == zone)
+                {
+                    zoneColor = 0xffffff;
+                }
+                else
+                {
+                    roverColor = 0xffffff;
+                }
+                break;
+            }
+        }
+
+        private function showClick(event:VEvent):void
+        {
+            switch (event.data.func)
+            {
+            case "light": 
+                zone.dripAt(event.data.mouseEvent.localX,
+                            event.data.mouseEvent.localY,
+                            0xff8888);
+                break;
+            case "heavy": 
+                zone.dripAt(event.data.mouseEvent.localX,
+                            event.data.mouseEvent.localY,
+                            0x882222);
+                break;
+            case "flag": 
+                zone.dripAt(event.data.mouseEvent.localX,
+                            event.data.mouseEvent.localY,
+                            0x6666dd);
+                break;
+            case "restart":
+                zone.clear();
+                break;
+            }
+        }
+
+    ]]></mx:Script>
+
+    <HipCanvas borderStyle="solid" borderColor="#555555"
+            fhover="showHover(event);"
+            fclick="showClick(event);"
+            >
+
+        <mx:Canvas backgroundColor="{zoneColor}">
+            <a:DripComponent id="zone" height="320" width="640"/>
+        </mx:Canvas>
+
+        <a:ColorBox id="rover" x="270" y="110" width="100" height="100"
+                backgroundColor="{roverColor}"/>
+    </HipCanvas>
+
+    <m:MouseTracker view="{zone}">
+        <m:config>
+            <mx:XML>
+                 <MouseTracker>
+                     <function id="light" alt="false" ctrl="false"/>
+                     <function id="heavy" alt="true"/>
+                     <function id="flag" ctrl="true" onDown="true"/>
+                 </MouseTracker>
+            </mx:XML>
+        </m:config>
+    </m:MouseTracker>
+
+    <m:MouseTracker view="{rover}">
+        <m:config>
+            <mx:XML>
+                 <MouseTracker>
+                     <function id="restart"/>
+                 </MouseTracker>
+            </mx:XML>
+        </m:config>
+    </m:MouseTracker>
+
+</mx:VBox>

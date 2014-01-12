@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:HBox xmlns="net.ech.puzzle.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    horizontalAlign="center"
+    initialize="currentState = EMPTY_STATE;"
+    creationComplete="updateState()"
+    rollOver="rollOver()"
+    rollOut="rollOut()"
+>
+
+    <mx:Metadata>
+        [Event("clear")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import flash.utils.Timer;
+        import flash.events.TimerEvent;
+        import net.ech.events.Listeners;
+
+        public static const CLEAR:String = "clear";
+
+        public static const EMPTY_STATE:String = "empty";
+        public static const READY_STATE:String = "ready";
+        public static const ARMED_STATE:String = "armed";
+
+        public static const TRANSITION_DURATION:int = 1000;
+
+        private var _model:PuzzleModel;
+        private var _clickCount:int = 0;
+        private var _timer:Timer;
+
+        public function set model(model:PuzzleModel):void
+        {
+            Listeners.remove(_model, { stateChange: handleStateChange });
+            _model = model;
+            Listeners.add(_model, { stateChange: handleStateChange });
+            updateState();
+        }
+
+        private function updateState():void
+        {
+            stopTimer();
+
+            if (_model == null || _model.status == States.CLEAR)
+            {
+                currentState = EMPTY_STATE;
+            }
+            else if (_clickCount == 0)
+            {
+                currentState = READY_STATE;
+            }
+            else
+            {
+                currentState = ARMED_STATE;
+            }
+        }
+
+        private function click():void
+        {
+            if (_clickCount == 0)
+            {
+                _clickCount += 1;
+            }
+            else
+            {
+                dispatchEvent(new Event(CLEAR));
+                _clickCount = 0;
+            }
+            updateState();
+        }
+
+        private function rollOver():void
+        {
+            stopTimer();
+        }
+
+        private function rollOut():void
+        {
+            if (currentState == ARMED_STATE)
+            {
+                startTimer();
+            }
+        }
+
+        private function startTimer():void
+        {
+            if (_timer == null)
+            {
+                _timer = new Timer(5000);
+                _timer.addEventListener(TimerEvent.TIMER, handleTimer);
+                _timer.start();
+            }
+        }
+
+        private function stopTimer():void
+        {
+            if (_timer != null)
+            {
+                _timer.stop();
+                _timer = null;
+            }
+        }
+
+        private function handleTimer(event:TimerEvent):void
+        {
+            _clickCount = 0;
+            updateState();
+        }
+
+        private function handleStateChange(event:Event):void
+        {
+            updateState();
+        }
+
+    ]]></mx:Script>
+
+    <mx:LinkButton id="clearButton"
+            label="Clear Puzzle"
+            visible="false"
+            click="click()" />
+
+    <mx:LinkButton id="cancelButton"
+            label="Cancel" 
+            color="#666666"
+            visible="false"
+            includeInLayout="false"
+            click="_clickCount = 0; updateState();" />
+
+    <mx:states>
+        <mx:State name="{EMPTY_STATE}"/>
+
+        <mx:State name="{READY_STATE}">
+            <mx:SetProperty target="{clearButton}" name="visible" value="true"/>
+        </mx:State>
+
+        <mx:State name="{ARMED_STATE}">
+            <mx:SetProperty target="{clearButton}" name="visible" value="true"/>
+            <mx:SetProperty target="{clearButton}" name="label" value="Click again to clear..."/>
+            <mx:SetProperty target="{cancelButton}" name="visible" value="true"/>
+            <mx:SetProperty target="{cancelButton}" name="includeInLayout" value="true"/>
+            <mx:SetProperty target="{cancelButton}" name="label" value="Cancel"/>
+        </mx:State>
+    </mx:states>
+
+</mx:HBox>

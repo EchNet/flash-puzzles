@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Test mines rendering.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:mc="net.ech.mines.classic.*"
+    height="100%"
+    width="100%"
+    creationComplete="recreate()"
+>
+
+    <mx:Script><![CDATA[
+        import mx.controls.Alert;
+        import net.ech.mines.*;
+        import net.ech.mines.classic.*;
+
+        [Bindable]
+        public var visualState:RiggedVisualState;
+
+        [Bindable]
+        public var layout:Layout;
+
+        private function recreate():void
+        {
+            var rows:int = int(rowsInput.text);
+            var columns:int = int(columnsInput.text);
+            layout = new Layout(rows, columns);
+            visualState = new RiggedVisualState(rows, columns);
+            renderer.width = renderer.bitmapData.width;
+            renderer.height = renderer.bitmapData.height;
+            rendererFrame.width = renderer.width;
+            rendererFrame.height = renderer.height;
+        }
+    ]]></mx:Script>
+
+    <!-- ICON DUMP -->
+
+    <mc:Icons id="minesIcons"/>
+
+    <mx:Repeater id="iconSetRep"
+            dataProvider="{[ minesIcons.tagIcons,
+                             minesIcons.digitIcons,
+                             minesIcons.faceIcons ]}">
+        <mx:HBox>
+            <mx:Repeater id="iconRep"
+                    dataProvider="{iconSetRep.currentItem}">
+
+                <mx:Image minWidth="20" minHeight="20"
+                        source="{iconRep.currentItem}"/>
+            </mx:Repeater>
+        </mx:HBox>
+    </mx:Repeater>
+
+    <mx:HRule width="300"/>
+
+    <!-- VisualState rendering test -->
+
+    <mx:HBox defaultButton="{applyButton}">
+        <mx:Label text="rows:"/>
+        <mx:TextInput id="rowsInput" text="8" width="40" restrict="0-9"/>
+
+        <mx:Spacer width="20"/>
+
+        <mx:Label text="columns:"/>
+        <mx:TextInput id="columnsInput" text="8" width="40" restrict="0-9"/>
+
+        <mx:Spacer width="20"/>
+
+        <mx:Button id="applyButton" label="Create"
+                click="recreate()" />
+    </mx:HBox>
+
+    <mx:VBox 
+        horizontalAlign="center" verticalAlign="middle"
+        minHeight="320" minWidth="640">
+
+        <mx:Image id="rendererFrame">
+            <mx:source>
+                <mc:ClassicRenderer id="renderer"
+                        layout="{layout}"
+                        visualState="{visualState}" />
+            </mx:source>
+        </mx:Image>
+    </mx:VBox>
+
+    <mx:HBox>
+        <mx:Label text="Face:"/>
+        <mx:Button label="Rotate" click="visualState.rotateFace();" />
+
+        <mx:Label text="Counter:"/>
+        <mx:NumericStepper id="counterStepper"
+                minimum="-99" maximum="999" stepSize="1"
+                value="0" 
+                change="visualState.counter = counterStepper.value;" />
+
+        <mx:Label text="Timer:"/>
+        <mx:NumericStepper id="timerStepper"
+                minimum="-99" maximum="999" stepSize="1"
+                value="0" 
+                change="visualState.timer = timerStepper.value;" />
+    </mx:HBox>
+
+    <mx:HBox>
+        <mx:Label text="Row:"/>
+        <mx:NumericStepper id="rowStepper"
+                minimum="0" maximum="{visualState.grid.rows - 1}"
+                stepSize="1" value="0" />
+
+        <mx:Label text="Column:"/>
+        <mx:NumericStepper id="columnStepper"
+                minimum="0" maximum="{visualState.grid.columns - 1}"
+                stepSize="1" value="0" />
+
+        <mx:Button label="Rotate"
+                click="visualState.rotateCell(rowStepper.value, columnStepper.value);" />
+    </mx:HBox>
+
+    <mx:HBox>
+        <mx:Button label="Clear Grid" click="visualState.clearGrid()"/>
+    </mx:HBox>
+
+</mx:VBox>

@@ -1,0 +1,207 @@
+package
+{
+    import mx.collections.*;
+
+    public class PbnModel
+    {
+        private var _xml:XML;
+
+        public static const WORKING_STATE:String = "working";
+        public static const FINISHED_STATE:String = "finished";
+        public static const HOPELESS_STATE:String = "hopeless";
+
+        public static const UNKNOWN:Number = 0;
+        public static const WHITE:Number = -1;
+        public static const BLACK:Number = 1;
+
+        [Bindable]
+        public var rowInputs:Array;
+
+        [Bindable]
+        public var columnInputs:Array;
+
+        [Bindable]
+        public var table:Array;
+
+        [Bindable]
+        public var state:String;
+
+        [Bindable]
+        public var activeRow:int = -1;
+
+        [Bindable]
+        public var activeColumn:int = -1;
+
+        public var rowDirty:Array;
+        public var columnDirty:Array;
+
+        public function PbnModel(xml:XML)
+        {
+            _xml = xml;
+
+            rowInputs = parseInputs(_xml.Row);
+            columnInputs = parseInputs(_xml.Column);
+            table = new Array(rowInputs.length);
+            for (var i:int = 0; i < table.length; ++i)
+            {
+                var row:Array = new Array(columnInputs.length);
+                for (var j:int = 0; j < columnInputs.length; ++j)
+                {
+                    row[j] = UNKNOWN;
+                }
+                table[i] = row;
+            }
+
+            rowDirty = newArrayOfTrue(rowInputs.length);
+            columnDirty = newArrayOfTrue(columnInputs.length);
+        }
+
+        private function newArrayOfTrue(length:int):Array
+        {
+            var arr:Array = new Array(length);
+            for (var i:int = 0; i < length; ++i)
+            {
+                arr[i] = true;
+            }
+            return arr;
+        }
+
+        public function get rowCount():int
+        {
+            return rowInputs.length;
+        }
+
+        public function get columnCount():int
+        {
+            return columnInputs.length;
+        }
+
+        public function get rowLength():int
+        {
+            return columnInputs.length;
+        }
+
+        public function get columnLength():int
+        {
+            return rowInputs.length;
+        }
+
+        public function validate():Boolean
+        {
+            return rowCount >= 1 &&
+                   columnCount >= 1 &&
+                   validateInputs(rowInputs) &&
+                   validateInputs(columnInputs) &&
+                   sumOf(rowInputs) == sumOf(columnInputs);
+        }
+
+        private function validateInputs(inputs:Array):Boolean
+        {
+            for (var i:int = 0; i < inputs.length; ++i)
+            {
+                for (var j:int = 0; j < inputs[i].length; ++j)
+                {
+                    if (inputs[i][j] < 1)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public function copyRow(rowIndex:int, row:Array):Array
+        {
+            if (row == null)
+            {
+                row = new Array(rowLength);
+            }
+            for (var i:int = 0; i < row.length; ++i)
+            {
+                row[i] = table[rowIndex][i];
+            }
+            return row;
+        }
+
+        public function copyColumn(columnIndex:int, column:Array):Array
+        {
+            if (column == null)
+            {
+                column = new Array(columnLength);
+            }
+            for (var i:int = 0; i < column.length; ++i)
+            {
+                column[i] = table[i][columnIndex];
+            }
+            return column;
+        }
+
+        public function applyRow(rowIndex:int, row:Array):void
+        {
+            for (var i:int = 0; i < row.length; ++i)
+            {
+                if (table[rowIndex][i] != row[i])
+                {
+                    table[rowIndex][i] = row[i];
+                    columnDirty[i] = true;
+                }
+            }
+            rowDirty[rowIndex] = false;
+        }
+
+        public function applyColumn(columnIndex:int, column:Array):void
+        {
+            for (var i:int = 0; i < column.length; ++i)
+            {
+                if (table[i][columnIndex] != column[i])
+                {
+                    table[i][columnIndex] = column[i];
+                    rowDirty[i] = true;
+                }
+            }
+            columnDirty[columnIndex] = false;
+        }
+
+        public function rowFinished(rowIndex:int):Boolean
+        {
+            for (var j:int = 0; j < table[rowIndex].length; ++j)
+            {
+                switch (table[rowIndex][j])
+                {
+                case WHITE: case BLACK:
+                    break;
+                default:
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public function columnFinished(columnIndex:int):Boolean
+        {
+            for (var j:int = 0; j < table.length; ++j)
+            {
+                switch (table[j][columnIndex])
+                {
+                case WHITE: case BLACK:
+                    break;
+                default:
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public function checkFinished():void
+        {
+            for (var i:int = 0; i < table.length; ++i)
+            {
+                if (!rowFinished(i))
+                {
+                    return;
+                }
+            }
+            state = FINISHED_STATE;
+        }
+    }
+}

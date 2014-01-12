@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.*"
+    xmlns:mc="net.ech.mines.classic.*"
+    creationComplete="update()"
+>
+
+    <mx:Script><![CDATA[
+        import net.ech.mines.*;
+
+        private static const SIZE_DATA:Array = [
+            {
+                label: "Small",
+                rows:  8,
+                columns: 8
+            },
+            {
+                label: "Medium",
+                rows:  16,
+                columns: 8
+            },
+            {
+                label: "Large",
+                rows:  16,
+                columns: 30
+            },
+            {
+                label: "Custom"
+            }
+        ];
+
+        private static const NMINES_DATA:Array = [
+            {
+                label: "Easy",
+                fraction:  (1.0 / 6.4)
+            },
+            {
+                label: "Medium",
+                fraction: (1.0 / 5.2)
+            },
+            {
+                label: "Hard",
+                fraction:  (0.99 / 4.8)
+            },
+            {
+                label: "Custom"
+            }
+        ];
+
+        [Bindable]
+        private var customSize:Boolean = false;
+
+        [Bindable]
+        private var customDifficulty:Boolean = false;
+
+        private function update():void
+        {
+            customSize = sizePicker.selectedItem.rows == undefined;
+
+            if (!customSize)
+            {
+                config.rows = sizePicker.selectedItem.rows;
+                config.columns = sizePicker.selectedItem.columns;
+            }
+            else
+            {
+                config.rows = rowsStepper.value;
+                config.columns = columnStepper.value;
+            }
+
+            customDifficulty = difficultyPicker.selectedItem.fraction == undefined;
+
+            if (!customDifficulty)
+            {
+                config.nmines = Math.floor(config.rows * config.columns * difficultyPicker.selectedItem.fraction);
+            }
+            else
+            {
+                config.nmines = Math.min(nminesStepper.value, config.rows * config.columns - 1);
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:Label text="Size:"/>
+
+    <mx:ComboBox id="sizePicker"
+            dataProvider="{SIZE_DATA}"
+            change="update()"/>
+
+    <mx:VBox enabled="{customSize}">
+
+        <mx:Label text="Rows:"/>
+        <mx:NumericStepper id="rowsStepper"
+                value="{config.rows}"
+                minimum="8" maximum="64"
+                change="update()" />
+
+        <mx:Label text="Columns:"/>
+        <mx:NumericStepper id="columnStepper"
+                value="{config.columns}"
+                minimum="8" maximum="64"
+                change="update()"/>
+    </mx:VBox>
+
+    <mx:Label text="Difficulty: " />
+
+    <mx:ComboBox id ="difficultyPicker"
+            dataProvider="{NMINES_DATA}"
+            change="update()"/>
+
+    <mx:VBox enabled="{customDifficulty}">
+
+        <mx:Label text="Number of mines:"/>
+        <mx:NumericStepper id="nminesStepper"
+                value="{config.nmines}"
+                minimum="1"
+                maximum="{config.rows * config.columns - 1}"
+                change="config.nmines = event.target.value;"/>
+    </mx:VBox>
+
+    <mx:Button label="Start"/>
+
+    <mx:HRule/>
+
+    <mx:Label text="Select a View:"/>
+    <mx:ComboBox dataProvider="{ [ 'Classic', 'Other' ] }"/>
+    <mx:CheckBox label="Question Mark Tag" selected="{options.marksQ}"/>
+
+    <m:MinesConfig id="config"/>
+
+    <m:MinesOptions id="options"/>
+
+</mx:VBox>

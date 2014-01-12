@@ -1,0 +1,53 @@
+/**
+ * suds style sheet
+ */
+
+.messageBox {
+    backgroundColor: #aaffbb;
+    borderAlpha: 0.85;
+}
+
+.mainPanel {
+    backgroundColor: white;
+    verticalGap: 0;
+    titleStyleName: titleStyle;
+    statusStyleName: statusStyle;
+    shadowDirection: right;
+    shadowDistance: 3;
+    borderAlpha: 1;
+    highlightAlphas: 1, 1;
+    headerColors: white, #cccccc;
+    footerColors: white, #cccccc;
+}
+
+.titleStyle {
+    fontSize: 14;
+    color: black;
+    fontWeight: bold;
+}
+
+.statusStyle {
+    fontSize: 10;
+    color: #444444;
+    fontWeight: normal;
+}
+
+ControlBar {
+    horizontalAlign: center;
+}
+
+.controlButton {
+    fontSize: 12;
+    fontWeight: bold;
+}
+
+MenuBar {
+    fontSize: 12;
+    fontWeight: bold;
+}
+
+TextInput {
+    fontSize: 20;
+    borderStyle: none;
+    textAlign: center;
+}

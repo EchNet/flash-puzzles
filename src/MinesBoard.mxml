@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.*"
+    xmlns:mc="net.ech.mines.classic.*"
+    horizontalAlign="center"
+    verticalAlign="middle"
+    minHeight="320"
+    minWidth="640"
+>
+
+    <mx:Script><![CDATA[
+        import net.ech.mines.*;
+
+        private var _options:MinesOptions;
+
+        [Bindable]
+        public var model:MinesModel;
+
+        public function set config(config:MinesConfig):void
+        {
+            model = new MinesModel(config);
+            if (_options) controller.applyOptions(_options);
+        }
+
+        public function set options(options:MinesOptions):void
+        {
+            _options = options;
+            controller.applyOptions(_options);
+        }
+
+    ]]></mx:Script>
+
+    <mx:Image width="{view.preferredWidth}" height="{view.preferredHeight}">
+
+        <mx:source>
+            <mc:ClassicView id="view" model="{model}"
+                    flag="controller.rotateTag(event.data.row, event.data.column);"
+                    expose="controller.expose(event.data.row, event.data.column);"
+                    clearAround="controller.clearAround(event.data.row, event.data.column);"
+                    restart="controller.restart();"
+                    />
+        </mx:source>
+    </mx:Image>
+
+    <m:MinesController id="controller" model="{model}" />
+
+</mx:VBox>

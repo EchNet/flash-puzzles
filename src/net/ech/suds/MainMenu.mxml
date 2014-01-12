@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:MenuBar xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    dataProvider="{menuBarProvider}"
+    labelField="@label"
+    creationComplete="onCreationComplete()"
+    itemClick="dispatchEvent(new InvocationEvent(event.item.@data))" 
+>
+
+    <mx:Metadata>
+        [Event(name="invocation", type="net.ech.events.InvocationEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+
+        import mx.collections.XMLListCollection;
+        import net.ech.events.InvocationEvent;
+        import net.ech.sudoku.SudokuMethod;
+
+        [Bindable]
+        private var menuBarProvider:XMLListCollection;
+
+        private var menuData:XMLList = <>
+            <menuitem label="Puzzle">
+                <menuitem label="Load a New Puzzle"
+                          data={SudokuMethod.INITIATE_PUZZLE_LOAD} />
+                <menuitem label="Key in a New Puzzle"
+                          data={SudokuMethod.INITIATE_PUZZLE_ENTRY} />
+                <menuitem label="Restart this Puzzle" data="restart" />
+            </menuitem>
+            <menuitem label="Help">
+                <menuitem label="Instructions" data="help"/>
+                <menuitem label="About Sudoku" data="aboutSudoku"/>
+                <menuitem label="About Sudoku Trainer" data="about"/>
+            </menuitem>
+        </>;
+
+        private function onCreationComplete():void
+        {
+            menuBarProvider = new XMLListCollection(menuData);
+        }
+
+    ]]></mx:Script>
+
+</mx:MenuBar>

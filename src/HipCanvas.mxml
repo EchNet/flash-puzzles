@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Test the Mines mouse tracker.
+
+-->
+
+<mx:Canvas xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.*"
+>
+    <mx:Metadata>
+        [Event(name="fclick", type="net.ech.viva.events.VEvent")]
+        [Event(name="fhover", type="net.ech.viva.events.VEvent")]
+    </mx:Metadata>
+
+</mx:Canvas>

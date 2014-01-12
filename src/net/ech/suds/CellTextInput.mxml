@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:TextInput xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    restrict=" 1-9"
+    maxChars="1"
+    editable="false"
+    focusIn="handleFocusIn()"
+    textInput="handleTextInput(event)"
+>
+
+    <mx:Script><![CDATA[
+
+        import flash.events.TextEvent;
+        import net.ech.events.InvocationEvent;
+        import net.ech.sudoku.CellModel;
+        import net.ech.sudoku.CellStates;
+        import net.ech.sudoku.SudokuMethod;
+
+        /**
+         * Auto-select on focus in.
+         */
+        private function handleFocusIn():void
+        {
+            selectionBeginIndex = 0;
+            selectionEndIndex = text.length;
+        }
+
+        private function handleTextInput(event:TextEvent):void
+        {
+            var value:String;
+
+            if (event.text == "" || event.text == " ")
+            {
+                value = CellModel.EMPTY_INPUT;
+            }
+            else if ("123456789".indexOf(event.text) >= 0)
+            {
+                value = event.text;
+            }
+
+            if (value != null)
+            {
+                text = value;
+
+                focusManager.getNextFocusManagerComponent().setFocus();
+
+                dispatchEvent(new InvocationEvent(
+                        SudokuMethod.MODIFY_CELL,
+                        [ value, data, this ]));
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:states>
+        <mx:State name="{CellStates.NEUTRAL}">
+        </mx:State>
+
+        <mx:State name="{CellStates.GIVEN}">
+            <mx:SetStyle target="{this}" name="color" value="black"/>
+        </mx:State>
+
+        <mx:State name="{CellStates.WORKING}">
+            <mx:SetStyle target="{this}" name="color" value="#55555"/>
+        </mx:State>
+
+        <mx:State name="{CellStates.INPUT}">
+            <mx:SetStyle target="{this}" name="color" value="#883388"/>
+            <mx:SetProperty target="{this}" name="editable" value="true"/>
+        </mx:State>
+    </mx:states>
+
+</mx:TextInput>

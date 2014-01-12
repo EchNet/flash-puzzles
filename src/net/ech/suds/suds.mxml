@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Sudoku Trainer Application, main module.
+
+-->
+
+<mx:Application xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:suds="net.ech.sudoku.*"
+    styleName="plain"
+    backgroundColor="#bb88cc"
+    pageTitle="Sudoku Trainer"
+    creationComplete="controller.initialize()"
+>
+
+    <mx:Style source="style.css"/>
+
+    <suds:SudokuModel id="model"/>
+
+    <SudokuView id="view" model="{model}" />
+
+    <SudsAppController id="controller"
+            application="{this}"
+            model="{model}"
+            view="{view}"
+            puzzleService="{puzzleService}" />
+
+    <suds:PuzzleService id="puzzleService" applicationName="suds" />
+
+</mx:Application>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Hashi (Bridges)
+
+-->
+
+<mx:Box xmlns="net.ech.hashi.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:puzzle="net.ech.puzzle.*"
+    borderStyle="solid"
+    borderColor="#222288"
+    creationComplete="handleCreationComplete()"
+>
+    <mx:Script><![CDATA[
+
+        private function handleCreationComplete():void
+        {
+            addEventListener("clear", function(e:Event):void
+            {
+                controller.clear();
+            });
+        }
+
+    ]]></mx:Script>
+
+    <HashiController id="controller" model="{data as HashiModel}"/>
+
+    <mx:Image width="{view.preferredWidth}" height="{view.preferredHeight}"
+            scaleContent="false">
+
+        <mx:source>
+            <HashiView id="view" model="{data as HashiModel}" select="controller.select(Bridge(event.data))" />
+        </mx:source>
+    </mx:Image>
+
+</mx:Box>

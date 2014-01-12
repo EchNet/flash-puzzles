@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:TitleWindow xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    backgroundColor="white"
+    title="Failure to Start"
+    width="360" maxHeight="360" horizontalAlign="center">
+
+    <mx:Script><![CDATA[
+
+    import mx.managers.PopUpManager;
+
+    [Bindable]
+    public var errors:Array;
+
+    ]]></mx:Script>
+
+    <mx:Text width="100%" text="Cannot start up this game for the following reason(s):"/>
+
+    <mx:VBox width="80%">
+        <mx:Repeater id="reppy" dataProvider="{errors}">
+            <mx:Text text="{reppy.currentItem}" width="100%"/>
+        </mx:Repeater>
+    </mx:VBox>
+
+    <mx:Button label="OK" click="PopUpManager.removePopUp(this)"/>
+
+</mx:TitleWindow>

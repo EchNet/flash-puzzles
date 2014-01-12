@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Test mines gesture handling.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:m="net.ech.mines.*"
+    xmlns:mc="net.ech.mines.classic.*"
+    height="100%"
+    width="100%"
+    creationComplete="go()"
+>
+
+    <mx:Script><![CDATA[
+        import mx.controls.Alert;
+        import net.ech.mines.*;
+        import net.ech.mines.classic.*;
+
+        [Bindable]
+        public var model:MinesModel;
+
+        private function go():void
+        {
+            var config:MinesConfig = new MinesConfig;
+            config.rows = 8;
+            config.columns = 8;
+            config.nmines = 21;
+            model = new MinesModel(config);
+            model.deserialize(
+                <mines>
+                    <rows>8</rows>
+                    <columns>8</columns>
+                    <nmines>12</nmines>
+                    <marksQ>true</marksQ>
+                    <state>1</state>
+                    <elapsedSeconds>20</elapsedSeconds>
+                    <grid>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0</grid>
+                </mines>);
+        }
+    ]]></mx:Script>
+
+    <mx:VBox 
+        horizontalAlign="center" verticalAlign="middle"
+        minHeight="320" minWidth="640">
+
+        <mx:Image width="{view.preferredWidth}" height="{view.preferredHeight}">
+
+            <mx:source>
+                <mc:ClassicView id="view" model="{model}"/>
+            </mx:source>
+        </mx:Image>
+    </mx:VBox>
+
+    <mx:VBox>
+    </mx:VBox>
+</mx:VBox>

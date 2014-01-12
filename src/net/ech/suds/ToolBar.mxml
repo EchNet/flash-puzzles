@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:ControlBar xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+>
+
+    <mx:Metadata>
+        [Event(name="invocation", type="net.ech.events.InvocationEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+
+        import net.ech.sudoku.SudokuMethod;
+        import net.ech.sudoku.SudokuState;
+        import net.ech.events.InvocationEvent;
+
+        [Bindable]
+        public var state:String;
+
+        private function invoke(cmd:String, args:Array = null):void
+        {
+            dispatchEvent (new InvocationEvent (cmd, args));
+        }
+
+        private function selectAnIndex(state:String):int
+        {
+            switch (state)
+            {
+            case SudokuState.WORKING:
+                return 1;
+            case SudokuState.ENTRY:
+                return 2;
+            default:
+                return 0;
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:ViewStack width="100%" selectedIndex="{selectAnIndex(state)}">
+
+        <mx:HBox width="100%" horizontalAlign="center">
+            <mx:Button styleName="controlButton" visible="false"/>
+        </mx:HBox>
+
+        <mx:HBox width="100%" horizontalAlign="center">
+            <mx:Button styleName="controlButton" label="Find Next Move" click="invoke(SudokuMethod.FIND_NEXT_MOVE)"/>
+        </mx:HBox>
+
+        <mx:HBox width="100%" horizontalAlign="center">
+            <mx:Button styleName="controlButton" label="Done" click="invoke(SudokuMethod.COMPLETE_PUZZLE_ENTRY)"/>
+        </mx:HBox>
+
+    </mx:ViewStack>
+
+</mx:ControlBar>

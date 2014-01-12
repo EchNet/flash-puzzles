@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Uniform Puzzle Board.
+
+-->
+
+<mx:VBox xmlns="net.ech.puzzle.*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    horizontalAlign="center"
+>
+    <mx:Metadata>
+        [Event(name="stateChange", type="net.ech.events.VEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+        import mx.core.Container;
+        import net.ech.fence.*;
+        import net.ech.hashi.*;
+        import net.ech.pbn.*;
+
+        private static const PUZZLE_TYPE_MAP:Object =
+        {
+            "hashi": {
+                title: "Bridges",
+                modelClass: HashiModel,
+                componentClass: Hashi
+            },
+            "pbn": {
+                title: "Paint By Numbers",
+                modelClass: PbnModel,
+                componentClass: PaintByNumbers
+            },
+            "fence": {
+                title: "Fences",
+                modelClass: FencesModel,
+                componentClass: Fences
+            }
+        };
+
+        private var _component:Container;
+
+        [Bindable("dataChange")]
+        public function get model():PuzzleModel
+        {
+            return data as PuzzleModel;
+        }
+
+        [Bindable]
+        public var title:String = "";
+
+        public function createNewPuzzle(xml:XML):void
+        {
+            while (viewHolder.numChildren > 0)
+            {
+                viewHolder.removeChildAt(0);
+            }
+
+            data = null;
+            _component = null;
+            title = "";
+
+            var typeInfo:Object = PUZZLE_TYPE_MAP[xml.@type.toString()];
+            if (typeInfo != null)
+            {
+                var model:PuzzleModel = new typeInfo.modelClass(xml);
+                _component = new typeInfo.componentClass;
+                _component.data = model;
+                data = model;
+                viewHolder.addChild(_component);
+                title = typeInfo.title + ": " + xml.title;
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:Label fontSize="18" text="{title}"/>
+
+    <mx:Canvas id="viewHolder"/>
+
+    <mx:Label fontSize="14" color="#880000" text="...solved!"
+            fontStyle="italic"
+            includeInLayout="{model != null &amp;&amp; model.solved}"
+            visible="{model != null &amp;&amp; model.solved}"/>
+
+    <ClearControl model="{model}"
+            clear="_component.dispatchEvent(event)"/>
+
+
+</mx:VBox>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Panel xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="Sudoku Trainer"
+    status="{model.state}"
+    styleName="mainPanel"
+>
+
+    <mx:Metadata>
+        [Event(name="invocation", type="net.ech.events.InvocationEvent")]
+    </mx:Metadata>
+
+    <mx:Script><![CDATA[
+
+        import net.ech.sudoku.*;
+
+        [Bindable]
+        public var model:SudokuModel;
+
+    ]]></mx:Script>
+
+    <MainMenu width="100%" />
+
+    <GridView model="{model}" />
+
+    <ToolBar state="{model.state}" />
+
+</mx:Panel>

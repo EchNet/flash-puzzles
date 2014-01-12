@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    width="{GridGraphics.CELL_SIZE * 9}"
+    height="{GridGraphics.CELL_SIZE * 9}"
+    creationComplete="GridGraphics.draw(this)"
+    >
+
+    <mx:Script><![CDATA[
+
+        import mx.controls.TextInput;
+        import net.ech.sudoku.*;
+        import net.ech.events.InvocationEvent;
+
+        private static const CELL_PADDING:int = 5;
+        private static const CELL_INNER_SIZE:int =
+            GridGraphics.CELL_SIZE - (2 * CELL_PADDING);
+
+        [Bindable]
+        public var model:SudokuModel;
+
+        private var _modelState:String;
+
+        private function computeCellX(index:int):int
+        {
+            var columnIndex:int = index % SudokuRules.N_COLUMNS;
+            return (columnIndex * GridGraphics.CELL_SIZE) + CELL_PADDING;
+        }
+
+        private function computeCellY(index:int):int
+        {
+            var rowIndex:int = index / SudokuRules.N_COLUMNS;
+            return (rowIndex * GridGraphics.CELL_SIZE) + CELL_PADDING;
+        }
+
+        private function set modelState(value:String):void
+        {
+            if (_modelState != SudokuState.ENTRY &&
+                value == SudokuState.ENTRY)
+            {
+                callLater(resetFocus);
+            }
+            _modelState = value;
+        }
+
+        /**
+         * Set focus to the first of my TextInput children.
+         */
+        private function resetFocus():void
+        {
+            //for (var i:int = 0; i < numChildren; ++i)
+            for (var i:int = numChildren; --i >= 0; )
+            {
+                if (getChildAt(i) is TextInput)
+                {
+                    TextInput(getChildAt(i)).setFocus();
+                }
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:Repeater id="rep" dataProvider="{model.cells}">
+
+        <CellTextInput 
+            x="{computeCellX(rep.currentIndex)}"
+            y="{computeCellY(rep.currentIndex)}"
+            width="{CELL_INNER_SIZE}"
+            height="{CELL_INNER_SIZE}"
+            text="{rep.currentItem.number}"
+            currentState="{rep.currentItem.state}"
+            data="{rep.currentItem}"
+        />
+    </mx:Repeater>
+
+    <mx:Binding source="model.state" destination="modelState"/>
+
+</mx:Canvas>

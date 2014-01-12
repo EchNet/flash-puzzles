@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:Application xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:a="net.ech.anim.*"
+    xmlns:p="net.ech.puzzle.*"
+    styleName="plain"
+    width="100%" height="100%"
+    paddingTop="8"
+    paddingLeft="16"
+    creationComplete="handleCreationComplete()"
+>
+
+    <mx:Style>
+        global
+        {
+            font-family: "Verdana";
+            font-size: 10;
+        }
+
+        Application
+        {
+            modalTransparency: 0;
+            modalTransparenyBlur: 5;
+            modalTransparenyColor: #ffffff;
+            modalTransparencyDuration: 200;
+        }
+
+    </mx:Style>
+
+    <mx:Script><![CDATA[
+        import flash.external.*;
+        import flash.events.*;
+        import mx.controls.Alert;
+        import mx.events.CloseEvent;
+        import net.ech.puzzle.States;
+
+        [Bindable]
+        public var VERSION:String = "v0.2";
+
+        private var _pendingXml:XML;
+
+        private function handleCreationComplete():void
+        {
+            registerExternalControl();
+
+            if (parameters["cfg"] != null)
+            {
+                startPuzzle(parameters["cfg"]);
+            }
+            else if (persistence.available && persistence.xml != null &&
+                     persistence.xml.state.length() > 0)
+            {
+                startPuzzle(persistence.xml);
+            }
+            else
+            {
+                currentState = "splash";
+                callback(null);
+            }
+        }
+
+        private function registerExternalControl():void
+        {
+            if (ExternalInterface.available)
+            {
+                ExternalInterface.addCallback("configure", configure);
+            }
+        }
+
+        private function configure(cfg:Object):void
+        {
+            var xml:XML = XML(cfg);
+
+            if (puzzleBoard != null && puzzleBoard.model != null &&
+                xml.@id == puzzleBoard.model.serialize().@id)
+            {
+                // Already playing this one.
+            }
+            else if (puzzleBoard == null || puzzleBoard.model == null ||
+                     puzzleBoard.model.status != States.WORKING)
+            {
+                startPuzzle(xml);
+            }
+            else
+            {
+                startPendingUserApproval(xml);
+            }
+        }
+
+        private function startPendingUserApproval(xml:XML):void
+        {
+            var wasPending:Boolean = _pendingXml != null;
+            _pendingXml = xml;
+
+            if (!wasPending)
+            {
+                Alert.show("Throw away your work on the current puzzle?",
+                           "Please Confirm", 3, puzzleBoard,
+                           function(event:CloseEvent):void
+                           {
+                               if (event.detail == Alert.YES)
+                               {
+                                  startPuzzle(_pendingXml);
+                               }
+
+                               _pendingXml = null;
+                           });
+            }
+        }
+
+        private function startPuzzle(xml:XML):void
+        {
+            currentState = "puzzle";
+            puzzleBoard.createNewPuzzle(xml);
+            persistence.save(xml);
+            callback(String(xml.@id));
+        }
+
+        private function callback(id:String):void
+        {
+            if (parameters.callback && ExternalInterface.available)
+            {
+                ExternalInterface.call(parameters.callback, id);
+            }
+        }
+
+    ]]></mx:Script>
+
+    <mx:states>
+        <mx:State name="splash">
+            <mx:AddChild>
+                <mx:Canvas width="100%" height="100%">
+
+                    <a:DripComponent id="splash" width="100%" height="100%"/>
+
+                    <mx:VBox id="hood"
+                            width="100%" height="100%"
+                            horizontalAlign="center" verticalAlign="middle">
+
+                        <mx:Text color="white"
+                            width="100%" textAlign="center"
+                            fontSize="96" text="JEFFREY'S BOOK OF PUZZLES"
+                            selectable="false"/>
+                    </mx:VBox>
+
+                    <mx:Label text="{VERSION}" bottom="6" right="6"
+                            color="white"/>
+                </mx:Canvas>
+            </mx:AddChild>
+        </mx:State>
+
+        <mx:State name="puzzle">
+            <mx:AddChild>
+                <p:PuzzleBoard id="puzzleBoard"/>
+            </mx:AddChild>
+        </mx:State>
+    </mx:states>
+
+    <p:StateChangeThrottle model="{puzzleBoard.model}"
+            stillPeriod="2000"
+            stateChange="persistence.save(puzzleBoard.model.serialize())"/>
+
+    <p:Persistence id="persistence"/>
+
+</mx:Application>

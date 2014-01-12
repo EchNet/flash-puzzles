@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:ViewStack xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    toolTip="{model.annotation}"
+    selectedIndex="{entryEnabled ? 1 : 0}"
+    >
+
+    <mx:Script><![CDATA[
+
+    import net.ech.sudoku.CellModel;
+    import net.ech.events.InvocationEvent;
+
+    [Bindable]
+    public var model:CellModel;
+
+    [Bindable]
+    public var entryEnabled:Boolean;
+
+    private function onTextChange():void
+    {
+        dispatchEvent(new InvocationEvent(SudokuCommand.CHANGE_INPUT,
+                                          { value: input.text,
+                                            cell: model,
+                                            view: this }));
+    }
+
+    private function set given(given:Boolean):void
+    {
+        lbl.setStyle("color", given ? 0x000000 : 0xbb99bb);
+    }
+
+    ]]></mx:Script>
+
+    <mx:Canvas width="100%" height="100%">
+        <mx:Label id="lbl"
+            width="100%" height="100%"
+            styleName="CellText"
+            text="{model.number}"
+        />
+    </mx:Canvas>
+
+    <mx:Canvas width="100%" height="100%">
+        <mx:TextInput id="input"
+            width="100%" height="100%"
+            styleName="CellText"
+            text="{model.input}"
+            change="onTextChange()"
+            restrict="1-9"
+            maxChars="1"
+        />
+    </mx:Canvas>
+
+    <mx:Binding source="model.given" destination="given"/>
+
+</mx:ViewStack>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    Comment here.
+
+-->
+
+<mx:VBox xmlns="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+>
+
+    <mx:TabNavigator width="100%" height="100%">
+
+        <MinesMouseTest label="Mouse Tracker Test"/>
+
+        <MinesRenderTest label="Render Test"/>
+
+        <MinesGestureTest label="Gesture Test"/>
+
+    </mx:TabNavigator>
+
+</mx:VBox>
