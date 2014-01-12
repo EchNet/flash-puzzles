@@ -1,0 +1,15 @@
+<puzzle id="wop-200909-p24-2" type="hashi">
+    <title>#4 (medium)</title>
+    <config>
+        <row> ,2, ,3, ,3, , ,3, </row>
+        <row>3, ,3, ,2, ,1, , ,2</row>
+        <row> , , , , , , , , , </row>
+        <row> , ,2, ,3, ,3, ,3, </row>
+        <row>3, , ,3, , , ,4, ,6</row>
+        <row> , , , ,3, ,3, ,2, </row>
+        <row>5, ,2, , , , , , , </row>
+        <row> ,2, ,3, ,1, ,2, ,3</row>
+        <row>2, ,1, ,2, ,2, ,3, </row>
+        <row> ,3, ,4, ,4, ,3, ,3</row>
+    </config>
+</puzzle>

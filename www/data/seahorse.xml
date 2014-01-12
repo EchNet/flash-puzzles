@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<puzzle id="seahorse" type="pbn">
+    <title>#6</title>
+    <config>
+        <title>Seahorse</title>
+
+        <row>3</row>
+        <row>1,6</row>
+        <row>2,5</row>
+        <row>9</row>
+        <row>1,1,4,3</row>
+        <row>2,4</row>
+        <row>3,5</row>
+        <row>1,1,3,3</row>
+        <row>5,1</row>
+        <row>3,2,1</row>
+        <row>1,5,1</row>
+        <row>1,1,1,3,1,1</row>
+        <row>1,1,1,5,1</row>
+        <row>1,1,1,2,2</row>
+        <row>1,1,1,1,3</row>
+        <row>1,1,1,1,2,4</row>
+        <row>1,2,1,1,3,3</row>
+        <row>1,1,1,1,2,4</row>
+        <row>3,1,2,6</row>
+        <row>3,2,2,4</row>
+
+        <column>1,8,1</column>
+        <column>2</column>
+        <column>1,1,1,1,2,2</column>
+        <column>3,3</column>
+        <column>1</column>
+        <column>2,5,1</column>
+        <column>2,1,3</column>
+        <column>4</column>
+        <column>5,1,2</column>
+        <column>2,2,5</column>
+        <column>5</column>
+        <column>3,4,2</column>
+        <column>3,7,4</column>
+        <column>12,2,2</column>
+        <column>5,1,4,2</column>
+        <column>8,4,3</column>
+        <column>1,4,6</column>
+        <column>1,7</column>
+        <column>1,2,1,3</column>
+        <column>1,1</column>
+    </config>
+</puzzle>

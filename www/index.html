@@ -1,0 +1,416 @@
+<html>
+<head>
+<title>Jeffrey's Book of Puzzles</title>
+<link rel="StyleSheet" type="text/css" href="puzzle.css">
+<script type="text/javascript" src="../js/swfobject.js"></script>
+<script type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="header-inner">
+            <h1 class="wave">Jeffrey's Book of Puzzles</h1>
+        </div>
+    </div>
+
+    <div class="sidebar">
+
+        <div id="accordion" class="sidebar-inner">
+
+            <h3><a>Bridge Puzzles</a></h3>
+            <div class="sidebar-panel">
+                <ul>
+                    <li><a class="intro-launcher" name="bridge0"><i>Introduction</i></a></li>
+                    <li><a class="launcher" name="wop-200909-p24-1">#1 (easy)</a></li>
+                    <li><a class="launcher" name="wop-200905-p40-1">#2 (easy)</a></li>
+                    <li><a class="launcher" name="sample">#3 (medium)</a></li>
+                    <li><a class="launcher" name="wop-200909-p24-2">#4 (medium)</a></li>
+                    <li><a class="launcher" name="wop-200909-p24-3">#5 (hard)</a></li>
+                    <li><a class="launcher" name="wop-200909-p24-4">#6 (harder)</a></li>
+                </ul>
+            </div>
+
+            <h3><a>Paint By Numbers</a></h3>
+            <div class="sidebar-panel">
+                <ul>
+                    <li><a class="intro-launcher" name="pbn0"><i>Introduction</i></a></li>
+                    <li><a class="launcher" name="wop-200905-p54-9">#1</a></li>
+                    <li><a class="launcher" name="games-200903-p39-4">#2</a></li>
+                    <li><a class="launcher" name="king">#3</a></li>
+                    <li><a class="launcher" name="kitchen">#4</a></li>
+                    <li><a class="launcher" name="pastoral">#5</a></li>
+                    <li><a class="launcher" name="seahorse">#6</a></li>
+                    <!--  fix.. there is a zero in one row...
+                    <li><a class="launcher" name="cats">#7</a></li>
+                    -->
+                </ul>
+            </div>
+
+            <h3><a>Fences Puzzles</a></h3>
+            <div class="sidebar-panel">
+                <ul>
+                    <li><a class="intro-launcher" name="fence0"><i>Introduction</i></a></li>
+                    <li><a class="launcher" name="wop-200905-p37-1">#1 (easy)</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar2">
+        <div class="sidebar2-inner">
+            <div id="bridge-intro" class="intro-text">
+                <h3>Bridges</h3>
+                <p>
+                Connect the islands by laying bridges.  There may be up to
+                two bridges between any two islands.  There must be exactly the
+                number of bridges connecting to an island as shown on the island.
+                All islands must be connected, that is, it must be possible to
+                travel from any island to any other by crossing bridges.
+                </p>
+            </div>
+            <div id="pbn-intro" class="intro-text">
+                <h3>Paint By Numbers</h3>
+                <p>
+                    Fill in the boxes to create a picture.  The numbers along each
+                    row and column represent runs of black pixels that must appear in
+                    that row or column.  For example, "3 3 2" indicates that the
+                    row or column contains three runs of black,  two of length 3
+                    one of length 2.  A run of black is bounded either by white 
+                    space or by the edge of the row or column. 
+                </p>
+                <p>
+                    Click a pixel to toggle it.
+                    Hold down the "ctrl" key to fill in white pixels.
+                    Hold down the "shift" key to mark a guess.
+                </p>
+                <p>
+                    The puzzle is solved when all the boxes that are part of the
+                    picture are marked black, and none of the other pixels is 
+                    marked black.
+                </p>
+            </div>
+            <div id="fence-intro" class="intro-text">
+                <h3>Fences</h3>
+                <p>
+                Build a fence around a section of the grid.
+                The fence must form a single, continuous loop, dividing the
+                grid into squares that are inside the fence and squares that
+                are outside the fence.
+                For each numbered square in the grid, there must be exactly
+                the number of fence segments adjacent to the square as shown
+                in the square.
+                </p>
+            </div>
+            <div>
+                <a class="close-sidebar2">Close</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="center">
+        <div id="theSwffer"></div>
+    </div>
+</body>
+
+<script type="text/javascript">
+
+    $(function()
+    {
+        var swf;
+        var enabled = false;
+
+        // Mess with sidebar nav.
+        sidebar = (function()
+        {
+            var panels = [];
+            var animInterval = undefined;
+
+            init();
+            startAnimation();  // for IE.
+
+            function init ()
+            {
+                $("div.sidebar-panel").each(function()
+                {
+                    panels[panels.length] = {
+                        element: this,
+                        fullHeight: $(this).height(),
+                        open: false
+                    };
+                    $(this).height(0);
+                });
+
+                $("div.sidebar-inner h3 a").each(function(pos)
+                {
+                    $(this).click(function()
+                    {
+                        togglePanel(pos);
+                    });
+                })
+            }
+
+            function openPanel(panel)
+            {
+                for (var i in panels)
+                {
+                    panels[i].open = i == panel;
+                }
+                startAnimation();
+            }
+
+            function closePanel(panel)
+            {
+                panels[panel].open = false;
+                startAnimation();
+            }
+
+            function startAnimation()
+            {
+                if (animInterval == undefined)
+                {
+                    animInterval = setInterval(handleAnimation, 50);
+                }
+            }
+
+            function stopAnimation()
+            {
+                if (animInterval != undefined)
+                {
+                    clearInterval(animInterval);
+                    animInterval = undefined;
+                }
+            }
+
+            function handleAnimation()
+            {
+                var moreToDo = false;
+
+                for (var i in panels)
+                {
+                    var panel = panels[i];
+                    var jPanel = $(panel.element);
+                    if (panel.open)
+                    {
+                        var off = panel.fullHeight - jPanel.height();
+                        if (off > 0)
+                        {
+                            off = off < 3 ? 0 : (off * 2 / 3);
+                            jPanel.height(panel.fullHeight - off);
+                        }
+                        if (off > 0)
+                        {
+                            moreToDo = true;
+                        }
+                    }
+                    else
+                    {
+                        var newHeight = jPanel.height();
+                        if (newHeight > 0)
+                        {
+                            newHeight = newHeight < 3 ? 0 : (newHeight * 2 / 3);
+                            jPanel.height(newHeight);
+                        }
+                        moreToDo = moreToDo || (newHeight > 0);
+                    }
+                }
+
+                if (!moreToDo)
+                {
+                    stopAnimation();
+                }
+            }
+
+            function togglePanel(panel)
+            {
+                panels[panel].open ? closePanel(panel) : openPanel(panel);
+            }
+
+            function findId(id)
+            {
+                var link;
+                var panel;
+
+                $("div.sidebar-panel li a").each(function(pos)
+                {
+                    if ($(this).attr("name") == id)
+                    {
+                        link = pos;
+                    }
+                });
+
+                var count = 0;
+                $("div.sidebar-panel").each(function(pos)
+                {
+                    var l = count <= link;
+                    count += $(this).find("li a").length;
+                    var u = count > link;
+                    if (l && u) 
+                    {
+                        panel = pos;
+                    }
+                });
+
+                return { link: link, panel: panel };
+            }
+
+            return {
+                show: function(id)
+                {
+                    var loc = findId(id);
+                    openPanel(loc.panel);
+                    highlightLink(loc.link);
+                }
+            };
+        })();
+
+        $.puzzle = function(id)
+        {
+            enableUI();
+            if (id != null) sidebar.show(id);
+        };
+
+        var flashVersionRequired = "9.0.115";
+        if (!swfobject.hasFlashPlayerVersion(flashVersionRequired))
+        {
+            var msg = "Flash player version " + flashVersionRequired + " (or higher) is required to play the puzzles.";
+            var flashVersion = swfobject.getFlashPlayerVersion();
+            if (flashVersion.major == 0)
+            {
+                msg += " This browser does not have a Flash Plug-in.";
+            }
+            else
+            {
+                msg += " This browser's Flash Plug-in is version " + flashVersion + ".";
+            }
+            alert(msg);
+        }
+        else
+        {
+            swfobject.embedSWF("../swf/puzzle.swf", "theSwffer", 
+                               "100%", "100%",
+                               flashVersionRequired,
+                               null,
+                               { callback: "$.puzzle" });
+        }
+
+        function enableUI()
+        {
+            if (!enabled)
+            {
+                $("a.launcher").click(function()
+                {
+                    loadPuzzle($(this).attr("name"));
+                });
+
+                $("a.intro-launcher").click(function()
+                {
+                    var name = $(this).attr("name");
+                    loadPuzzle(name, name);
+                });
+
+                $("a.close-sidebar2").click(closeIntro);
+
+                enabled = true;
+            }
+        }
+
+        function openIntro(name)
+        {
+            $("div.sidebar2").show();
+            $("div.intro-text").hide();
+            $("#" + name.substring(0, name.length - 1) + "-intro").show();
+            $("div.center").removeClass("center").addClass("center2");
+        }
+
+        function closeIntro()
+        {
+            $("div.sidebar2").hide();
+            $("div.center2").removeClass("center2").addClass("center");
+        }
+
+        function loadPuzzle(id, showIntro)
+        {
+            startWaveAnimation();
+
+            if (showIntro != undefined)
+            {
+                openIntro(showIntro);
+            }
+            else
+            {
+                closeIntro();
+            }
+
+            $.get("data/" + id + ".xml", {}, function(data)
+            {
+                var name = "theSwffer";
+                var swf = (isIE() ? window : document)[name];
+                swf.configure(data);
+                return false;
+            }, 'text');
+        };
+
+        function startWaveAnimation()
+        {
+            var elem = $(".wave");
+            var segs = [];
+            var text = elem.text();
+            for (var i = 0; i < text.length; ++i)
+            {
+                if (text.charAt(i) == ' ')
+                {
+                    if (segs.length > 0)
+                    {
+                        segs[segs.length - 1] += ' ';
+                    }
+                }
+                else
+                {
+                    segs[segs.length] = text.charAt(i);
+                }
+            }
+            var period = segs.length * 3;
+
+            var t = 0;
+            updateWave();
+
+            function updateWave()
+            {
+                var pix = ++t;
+                if (pix > period) pix = -1;
+                else pix = Math.min(pix, period - pix);
+                elem.html(catSegs(pix));
+                if (pix != -1)
+                {
+                    setTimeout(updateWave, 50);
+                }
+            }
+
+            function catSegs(pix)
+            {
+                var html = "";
+                for (var i = 0; i < segs.length; ++i)
+                {
+                    if (i == pix || i == pix - 1)
+                    {
+                        html += "<span style='color:#ffbbaa;'>" + 
+                                segs[i] + "</span>";
+                    }
+                    else
+                    {
+                        html += segs[i];
+                    }
+                }
+                elem.html(html);
+                return html;
+            }
+        }
+
+        // There's no escaping it.
+        function isIE()
+        {
+            return navigator.appName.indexOf('Microsoft') >= 0;
+        }
+    });
+
+</script>
+</html>

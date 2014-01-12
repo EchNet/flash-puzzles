@@ -1,0 +1,8 @@
+<puzzle id="bridge0" type="hashi">
+    <title>Test Run</title>
+    <config>
+        <row>2, ,2</row>
+        <row> , , </row>
+        <row>2, ,2</row>
+    </config>
+</puzzle>
